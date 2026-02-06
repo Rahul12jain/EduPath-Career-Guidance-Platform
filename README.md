@@ -14,3 +14,22 @@ EduPath is a career guidance web platform for Class 10th and 12th students, buil
 🖥️ Responsive and modern UI
 
 🤝 Team collaboration via GitHub
+
+🛠️ Tech Stack
+Frontend
+
+React (Vite)
+
+Tailwind CSS
+
+React Router DOM
+
+React Icons
+
+Backend (In Progress)
+
+Node.js
+
+Express.js
+
+MongoDB
