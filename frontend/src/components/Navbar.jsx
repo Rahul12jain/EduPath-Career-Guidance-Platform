@@ -26,7 +26,7 @@ function Navbar() {
           <NavLink to="/skill" className={navLinkClass}>
             Skill Assessment
           </NavLink>
-          <NavLink to="/quiz" className={navLinkClass}>
+          <NavLink to="/careerquiz" className={navLinkClass}>
             Career Quiz
           </NavLink>
           <NavLink to="/dashboard" className={navLinkClass}>
