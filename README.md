@@ -1,35 +1,36 @@
-# EduPath – Career Guidance Platform
+# EduPath-Career-Guidance-Platform
 
-EduPath is a web-based career guidance platform designed to help **Class 10th and 12th students** make informed career decisions through **skill assessments, career quizzes, and personalized dashboards**.
+EduPath is a career guidance web platform for Class 10th and 12th students, built using React, Tailwind CSS, Node.js, and MongoDB. It helps students explore career paths through skill assessments, quizzes, and a personalized dashboard.
 
-This project is being developed as a **college project** using modern web technologies and collaborative development practices.
+🚀 Features
 
----
+🎯 Career guidance for students
 
-## 🚀 Features
-- Career guidance for students
-- Skills Assessment & Career Quiz
-- Personalized student dashboard
-- Authentication (Login & Signup UI)
-- Responsive and modern UI
-- Team collaboration via GitHub
+🧠 Skills Assessment & Career Quiz
 
----
+📊 Personalized Dashboard with progress tracking
 
-## 🛠️ Tech Stack
+🔐 Authentication (Login & Signup UI)
 
-### Frontend
-- React (Vite)
-- Tailwind CSS
-- React Router DOM
-- React Icons
+🖥️ Responsive and modern UI
 
-### Backend (In Progress)
-- Node.js
-- Express.js
-- MongoDB
+🤝 Team collaboration via GitHub
 
----
+🛠️ Tech Stack
+Frontend
 
-## 📂 Project Structure
+React (Vite)
 
+Tailwind CSS
+
+React Router DOM
+
+React Icons
+
+Backend (In Progress)
+
+Node.js
+
+Express.js
+
+MongoDB
