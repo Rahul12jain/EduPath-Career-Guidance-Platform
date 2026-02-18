@@ -1,3 +1,6 @@
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import API from "../services/api";
 import {
   FaClipboardCheck,
   FaQuestionCircle,
@@ -6,15 +9,46 @@ import {
   FaArrowRight,
 } from "react-icons/fa";
 
+ 
+
 function Dashboard() {
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const { data } = await API.get("/auth/profile");
+        setUser(data);
+      } catch (error) {
+        console.log("Failed to fetch user");
+      }
+    };
+
+    fetchUser();
+  }, []);
+
   return (
     <div className="w-full min-h-screen bg-gray-50 px-6 py-10 pt-24">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold">Welcome back, Alex!</h1>
-        <p className="text-gray-600">
-          Ready to continue your career journey with EduPath?
-        </p>
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+        <div>
+          <h1 className="text-2xl font-bold">Welcome back, {user?.name}!</h1>
+          <p className="text-gray-600">
+            Ready to continue your career journey with EduPath?
+          </p>
+        </div>
+
+        <button
+          onClick={() => {
+            localStorage.removeItem("token");
+            navigate("/login");
+          }}
+          className="mt-4 sm:mt-0 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-5 py-2 rounded-lg font-medium hover:opacity-90 transition"
+        >
+          Logout
+        </button>
       </div>
 
       {/* Stats Cards */}
