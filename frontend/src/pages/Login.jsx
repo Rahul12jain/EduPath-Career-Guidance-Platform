@@ -1,9 +1,41 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { FaGoogle, FaFacebookF } from "react-icons/fa";
 import { HiAcademicCap } from "react-icons/hi";
 import loginImg from "../assets/login-illustration.jpg";
+import API from "../services/api";
 
 function Login() {
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const { data } = await API.post("/auth/login", formData);
+
+      // Save token
+      localStorage.setItem("token", data.token);
+
+      // Redirect to dashboard
+      navigate("/dashboard");
+    } catch (error) {
+      alert(error.response?.data?.message || "Login failed");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 pt-24 pb-24">
       <div className="w-full max-w-4xl bg-white rounded-2xl shadow-lg overflow-hidden grid grid-cols-1 md:grid-cols-2">
@@ -20,15 +52,23 @@ function Login() {
             Login to continue your journey
           </p>
 
-          <form className="mt-6 space-y-4">
+          <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             <input
+              type="email"
+              name="email"
               className="border rounded-lg px-3 py-2 w-full"
               placeholder="Email Address"
+              onChange={handleChange}
+              required
             />
+
             <input
               type="password"
+              name="password"
               className="border rounded-lg px-3 py-2 w-full"
               placeholder="Password"
+              onChange={handleChange}
+              required
             />
 
             <div className="flex justify-between text-sm">
@@ -40,7 +80,10 @@ function Login() {
               </Link>
             </div>
 
-            <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2.5 rounded-lg font-semibold">
+            <button
+              type="submit"
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2.5 rounded-lg font-semibold"
+            >
               Login
             </button>
           </form>
@@ -52,7 +95,6 @@ function Login() {
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            {/* Google */}
             <button
               type="button"
               className="flex items-center justify-center gap-2 border rounded-lg py-2 hover:border-red-500 hover:bg-red-50"
@@ -61,7 +103,6 @@ function Login() {
               <span className="font-medium">Google</span>
             </button>
 
-            {/* Facebook */}
             <button
               type="button"
               className="flex items-center justify-center gap-2 border rounded-lg py-2 hover:border-blue-600 hover:bg-blue-50"
@@ -93,3 +134,4 @@ function Login() {
 }
 
 export default Login;
+
