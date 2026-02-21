@@ -15,6 +15,8 @@ import Skill from "./pages/Skill";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ProtectedRoute from "./components/ProtectedRoute";
+
 
 function App() {
   return (
@@ -27,7 +29,7 @@ function App() {
             <Route path="/quiz" element={<Quiz />} />
             <Route path="/skill" element={<Skill />} />
             <Route path="/careers" element={<Careers />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/about" element={<About />} />
