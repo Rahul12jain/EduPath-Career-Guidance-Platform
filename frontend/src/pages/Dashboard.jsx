@@ -14,6 +14,8 @@ import {
 function Dashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const [latestQuiz, setLatestQuiz] = useState(null);
+  const [allQuizzes, setAllQuizzes] = useState([]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -27,6 +29,26 @@ function Dashboard() {
 
     fetchUser();
   }, []);
+
+  
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const userRes = await API.get("/auth/profile");
+      setUser(userRes.data);
+
+      const quizRes = await API.get("/quiz/latest");
+      setLatestQuiz(quizRes.data);
+
+      const allRes = await API.get("/quiz/all");
+      setAllQuizzes(allRes.data);
+    } catch (error) {
+      console.log("Error loading dashboard data");
+    }
+  };
+
+  fetchData();
+}, []);
 
   return (
     <div className="w-full min-h-screen bg-gray-50 px-6 py-10 pt-24">
@@ -161,25 +183,124 @@ function Dashboard() {
           <div className="bg-white rounded-xl p-6 shadow-sm">
             <h2 className="font-semibold mb-4">Personalized Recommendations</h2>
 
-            <Recommendation
-              tag="Career Path"
-              title="Software Developer"
-              desc="Based on your programming skills and interests"
-              match="92%"
-            />
-            <Recommendation
-              tag="Skill Development"
-              title="Advanced JavaScript"
-              desc="Strengthen your web development foundation"
-              match="88%"
-            />
-            <Recommendation
-              tag="Learning Resource"
-              title="Data Structures Course"
-              desc="Perfect for your computer science journey"
-              match="85%"
-            />
+            {latestQuiz && latestQuiz.scoreBreakdown ? (
+              <div>
+                <h2 className="font-semibold mb-4">Your Career Matches</h2>
+
+                {latestQuiz.scoreBreakdown
+                  .filter((item) => item.percentage > 0) // Remove 0%
+                  .slice(0, 3)
+                  .map((item, index) => (
+                    <div
+                      key={index}
+                      className={`mb-4 p-4 rounded-lg border ${
+                        index === 0
+                          ? "border-blue-600 bg-blue-50"
+                          : "border-gray-200"
+                      }`}
+                    >
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="font-medium">
+                          {item.career}
+                          {index === 0 && (
+                            <span className="ml-2 text-xs bg-blue-600 text-white px-2 py-1 rounded-full">
+                              Top Match
+                            </span>
+                          )}
+                        </span>
+                        <span className="text-blue-600 font-semibold">
+                          {item.percentage}%
+                        </span>
+                      </div>
+
+                      {/* Progress Bar */}
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div
+                          className="bg-gradient-to-r from-blue-600 to-purple-600 h-2 rounded-full"
+                          style={{ width: `${item.percentage}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            ) : (
+              <p className="text-sm text-gray-500">No quiz taken yet.</p>
+            )}
+
+            <div className="mt-6 text-center">
+              <button
+                onClick={() => navigate("/careerquiz")}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg font-medium hover:opacity-90 transition"
+              >
+                Retake Quiz
+              </button>
+            </div>
           </div>
+
+          {/* Previous Attempts */}
+          <div className="mt-10">
+            <h2 className="text-lg font-semibold mb-6">Previous Attempts</h2>
+
+            {allQuizzes.length === 0 ? (
+              <div className="bg-white p-6 rounded-xl shadow-sm text-center text-gray-500">
+                No previous attempts yet.
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {allQuizzes.map((quiz) => {
+                  const topMatch = quiz.scoreBreakdown?.[0];
+
+                  return (
+                    <div
+                      key={quiz._id}
+                      className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex justify-between items-center hover:shadow-md transition"
+                    >
+                      {/* LEFT SIDE */}
+                      <div>
+                        <div className="flex items-center gap-3">
+                          <h3 className="font-medium text-gray-800">
+                            {quiz.careerSuggestion}
+                          </h3>
+
+                          {topMatch && (
+                            <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full">
+                              {topMatch.percentage}%
+                            </span>
+                          )}
+                        </div>
+
+                        <p className="text-xs text-gray-500 mt-1">
+                          Attempted on{" "}
+                          {new Date(quiz.createdAt).toLocaleDateString(
+                            "en-IN",
+                            {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            },
+                          )}
+                        </p>
+                      </div>
+
+                      {/* DELETE BUTTON */}
+                      <button
+                        onClick={async () => {
+                          await API.delete(`/quiz/${quiz._id}`);
+                          setAllQuizzes(
+                            allQuizzes.filter((q) => q._id !== quiz._id),
+                          );
+                        }}
+                        className="px-4 py-2 text-sm rounded-lg border border-red-200 text-red-600 hover:bg-red-50 transition"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+          
         </div>
       </div>
     </div>
