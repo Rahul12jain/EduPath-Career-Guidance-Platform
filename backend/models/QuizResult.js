@@ -13,10 +13,8 @@
 //         answer: String,
 //       },
 //     ],
-//     careerSuggestion: {
-//       type: String,
-//       required: true,
-//     },
+//     careerSuggestion: String,
+//     scoreBreakdown: Object, // NEW
 //   },
 //   { timestamps: true },
 // );
@@ -32,14 +30,54 @@ const quizResultSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+
     answers: [
       {
         questionId: String,
         answer: String,
       },
     ],
-    careerSuggestion: String,
-    scoreBreakdown: Object, // NEW
+
+    careerSuggestion: {
+      type: String,
+    },
+
+    // scoreBreakdown: [
+    //   {
+    //     careerId: {
+    //       type: mongoose.Schema.Types.ObjectId,
+    //       ref: "Career",
+    //       required: true,
+    //     },
+    //     careerName: {
+    //       type: String,
+    //       required: true,
+    //     },
+    //     percentage: {
+    //       type: Number,
+    //       required: true,
+    //     },
+    //   },
+    // ],
+
+    scoreBreakdown: [
+      {
+        careerId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Career",
+          required: true,
+        },
+        careerName: {
+          type: String,
+          required: true,
+        },
+        percentage: {
+          type: Number,
+          required: true,
+        },
+      },
+    ],
+    
   },
   { timestamps: true },
 );

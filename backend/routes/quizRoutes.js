@@ -15,5 +15,11 @@ router.get("/latest", protect, getLatestQuiz);
 router.get("/all", protect, getAllQuizzes);
 router.delete("/:id", protect, deleteQuiz);
 
+console.log("submitQuiz:", submitQuiz);
+console.log("getLatestQuiz:", getLatestQuiz);
+console.log("getAllQuizzes:", getAllQuizzes);
+console.log("deleteQuiz:", deleteQuiz);
+console.log("protect:", protect);
+
 module.exports = router;
 

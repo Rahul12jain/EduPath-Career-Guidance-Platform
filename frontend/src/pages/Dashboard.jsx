@@ -16,6 +16,8 @@ function Dashboard() {
   const [user, setUser] = useState(null);
   const [latestQuiz, setLatestQuiz] = useState(null);
   const [allQuizzes, setAllQuizzes] = useState([]);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [selectedQuizId, setSelectedQuizId] = useState(null);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -284,11 +286,9 @@ useEffect(() => {
 
                       {/* DELETE BUTTON */}
                       <button
-                        onClick={async () => {
-                          await API.delete(`/quiz/${quiz._id}`);
-                          setAllQuizzes(
-                            allQuizzes.filter((q) => q._id !== quiz._id),
-                          );
+                        onClick={() => {
+                          setSelectedQuizId(quiz._id);
+                          setShowConfirm(true);
                         }}
                         className="px-4 py-2 text-sm rounded-lg border border-red-200 text-red-600 hover:bg-red-50 transition"
                       >
@@ -300,9 +300,43 @@ useEffect(() => {
               </div>
             )}
           </div>
-          
         </div>
       </div>
+
+      {showConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 w-80 shadow-lg">
+            <h3 className="text-lg font-semibold mb-3">Confirm Deletion</h3>
+
+            <p className="text-sm text-gray-600 mb-6">
+              Are you sure you want to delete this quiz attempt?
+            </p>
+
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setShowConfirm(false)}
+                className="px-4 py-2 text-sm border rounded-lg"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={async () => {
+                  await API.delete(`/quiz/${selectedQuizId}`);
+                  setAllQuizzes(
+                    allQuizzes.filter((q) => q._id !== selectedQuizId),
+                  );
+                  setShowConfirm(false);
+                }}
+                className="px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
@@ -362,3 +396,252 @@ function Recommendation({ tag, title, desc, match }) {
 }
 
 export default Dashboard;
+
+
+// import { useEffect, useState } from "react";
+// import { useNavigate } from "react-router-dom";
+// import API from "../services/api";
+// import {
+//   FaClipboardCheck,
+//   FaQuestionCircle,
+//   FaCheckCircle,
+//   FaClock,
+//   FaArrowRight,
+// } from "react-icons/fa";
+
+// function Dashboard() {
+//   const navigate = useNavigate();
+//   const [user, setUser] = useState(null);
+//   const [latestQuiz, setLatestQuiz] = useState(null);
+//   const [allQuizzes, setAllQuizzes] = useState([]);
+//   const [showConfirm, setShowConfirm] = useState(false);
+//   const [selectedQuizId, setSelectedQuizId] = useState(null);
+
+//   // Single data fetch
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       try {
+//         const userRes = await API.get("/auth/profile");
+//         setUser(userRes.data);
+
+//         const quizRes = await API.get("/quiz/latest");
+//         setLatestQuiz(quizRes.data);
+
+//         const allRes = await API.get("/quiz/all");
+//         setAllQuizzes(allRes.data);
+//       } catch (error) {
+//         console.log("Error loading dashboard data");
+//       }
+//     };
+
+//     fetchData();
+//   }, []);
+
+//   return (
+//     <div className="w-full min-h-screen bg-gray-50 px-6 py-10 pt-24">
+//       {/* HEADER */}
+//       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+//         <div>
+//           <h1 className="text-2xl font-bold">Welcome back, {user?.name}!</h1>
+//           <p className="text-gray-600">
+//             Ready to continue your career journey with EduPath?
+//           </p>
+//         </div>
+
+//         <button
+//           onClick={() => {
+//             localStorage.removeItem("token");
+//             navigate("/login");
+//           }}
+//           className="mt-4 sm:mt-0 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-5 py-2 rounded-lg font-medium hover:opacity-90 transition"
+//         >
+//           Logout
+//         </button>
+//       </div>
+
+//       {/* MAIN GRID */}
+//       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+//         {/* LEFT SECTION */}
+//         <div className="lg:col-span-2 space-y-6">
+//           {/* Career Progress */}
+//           <div className="bg-white rounded-xl p-6 shadow-sm">
+//             <h2 className="font-semibold mb-4">Career Progress Overview</h2>
+
+//             <div className="bg-blue-50 rounded-lg p-4 flex justify-between items-center mb-4">
+//               <div>
+//                 <p className="text-sm text-gray-600">Current Level</p>
+//                 <p className="font-medium">Intermediate Developer</p>
+//               </div>
+//               <div className="text-right">
+//                 <p className="font-semibold text-blue-600">Level 3</p>
+//                 <p className="text-xs text-gray-500">Next: Advanced</p>
+//               </div>
+//             </div>
+//           </div>
+
+//           {/* Previous Attempts */}
+//           <div>
+//             <h2 className="text-lg font-semibold mb-6">Previous Attempts</h2>
+
+//             {allQuizzes.length === 0 ? (
+//               <div className="bg-white p-6 rounded-xl shadow-sm text-center text-gray-500">
+//                 No previous attempts yet.
+//               </div>
+//             ) : (
+//               <div className="space-y-4">
+//                 {allQuizzes.map((quiz) => {
+//                   const topMatch = quiz.scoreBreakdown?.[0];
+
+//                   return (
+//                     <div
+//                       key={quiz._id}
+//                       className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex justify-between items-center hover:shadow-md transition"
+//                     >
+//                       {/* Clickable Career */}
+//                       <div
+//                         onClick={() =>
+//                           navigate(`/career/${topMatch?.careerId}`)
+//                         }
+//                         className="cursor-pointer"
+//                       >
+//                         <div className="flex items-center gap-3">
+//                           <h3 className="font-medium text-gray-800 hover:text-blue-600 transition">
+//                             {topMatch?.careerName}
+//                           </h3>
+
+//                           {topMatch && (
+//                             <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full">
+//                               {topMatch.percentage}%
+//                             </span>
+//                           )}
+//                         </div>
+
+//                         <p className="text-xs text-gray-500 mt-1">
+//                           Attempted on{" "}
+//                           {new Date(quiz.createdAt).toLocaleDateString(
+//                             "en-IN",
+//                             {
+//                               day: "numeric",
+//                               month: "short",
+//                               year: "numeric",
+//                             },
+//                           )}
+//                         </p>
+//                       </div>
+
+//                       {/* DELETE BUTTON */}
+//                       <button
+//                         onClick={() => {
+//                           setSelectedQuizId(quiz._id);
+//                           setShowConfirm(true);
+//                         }}
+//                         className="px-4 py-2 text-sm rounded-lg border border-red-200 text-red-600 hover:bg-red-50 transition"
+//                       >
+//                         Delete
+//                       </button>
+//                     </div>
+//                   );
+//                 })}
+//               </div>
+//             )}
+//           </div>
+//         </div>
+
+//         {/* RIGHT SECTION */}
+//         <div className="space-y-6">
+//           {/* Career Matches */}
+//           <div className="bg-white rounded-xl p-6 shadow-sm">
+//             <h2 className="font-semibold mb-4">Your Career Matches</h2>
+
+//             {latestQuiz && latestQuiz.scoreBreakdown ? (
+//               latestQuiz.scoreBreakdown
+//                 .filter((item) => item.percentage > 0)
+//                 .slice(0, 3)
+//                 .map((item, index) => (
+//                   <div
+//                     key={index}
+//                     onClick={() => navigate(`/career/${item.careerId}`)}
+//                     className={`cursor-pointer mb-4 p-4 rounded-lg border transition hover:shadow-md ${
+//                       index === 0
+//                         ? "border-blue-600 bg-blue-50"
+//                         : "border-gray-200"
+//                     }`}
+//                   >
+//                     <div className="flex justify-between items-center mb-2">
+//                       <span className="font-medium">
+//                         {item.careerName}
+//                         {index === 0 && (
+//                           <span className="ml-2 text-xs bg-blue-600 text-white px-2 py-1 rounded-full">
+//                             Top Match
+//                           </span>
+//                         )}
+//                       </span>
+
+//                       <span className="text-blue-600 font-semibold">
+//                         {item.percentage}%
+//                       </span>
+//                     </div>
+
+//                     <div className="w-full bg-gray-200 rounded-full h-2">
+//                       <div
+//                         className="bg-gradient-to-r from-blue-600 to-purple-600 h-2 rounded-full"
+//                         style={{ width: `${item.percentage}%` }}
+//                       ></div>
+//                     </div>
+//                   </div>
+//                 ))
+//             ) : (
+//               <p className="text-sm text-gray-500">No quiz taken yet.</p>
+//             )}
+
+//             <div className="mt-6 text-center">
+//               <button
+//                 onClick={() => navigate("/careerquiz")}
+//                 className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg font-medium hover:opacity-90 transition"
+//               >
+//                 Retake Quiz
+//               </button>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* DELETE CONFIRM MODAL */}
+//       {showConfirm && (
+//         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+//           <div className="bg-white rounded-xl p-6 w-80 shadow-lg">
+//             <h3 className="text-lg font-semibold mb-3">Confirm Deletion</h3>
+
+//             <p className="text-sm text-gray-600 mb-6">
+//               Are you sure you want to delete this quiz attempt?
+//             </p>
+
+//             <div className="flex justify-end gap-3">
+//               <button
+//                 onClick={() => setShowConfirm(false)}
+//                 className="px-4 py-2 text-sm border rounded-lg"
+//               >
+//                 Cancel
+//               </button>
+
+//               <button
+//                 onClick={async () => {
+//                   await API.delete(`/quiz/${selectedQuizId}`);
+//                   setAllQuizzes(
+//                     allQuizzes.filter((q) => q._id !== selectedQuizId),
+//                   );
+//                   setShowConfirm(false);
+//                 }}
+//                 className="px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+//               >
+//                 Delete
+//               </button>
+//             </div>
+//           </div>
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
+
+// export default Dashboard;
