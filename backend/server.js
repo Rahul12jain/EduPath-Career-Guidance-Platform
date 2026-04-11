@@ -29,6 +29,10 @@ app.get("/", (req, res) => {
   res.send("EduPath Backend Running 🚀");
 });
 
+app.get("/api/test", (req, res) => {
+  res.send("API working perfectly 🚀");
+});
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
