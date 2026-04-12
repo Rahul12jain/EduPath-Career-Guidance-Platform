@@ -23,6 +23,9 @@ function Navbar() {
           <NavLink to="/" className={navLinkClass}>
             Home
           </NavLink>
+          <NavLink to="/explorecareer" className={navLinkClass}>
+            Explore Career
+          </NavLink>
           <NavLink to="/skill" className={navLinkClass}>
             Skill Assessment
           </NavLink>
@@ -60,6 +63,13 @@ function Navbar() {
             </NavLink>
             <NavLink
               onClick={() => setOpen(false)}
+              to="/explorecareer"
+              className={navLinkClass}
+            >
+              Explore Career
+            </NavLink>
+            <NavLink
+              onClick={() => setOpen(false)}
               to="/skill"
               className={navLinkClass}
             >
@@ -67,7 +77,7 @@ function Navbar() {
             </NavLink>
             <NavLink
               onClick={() => setOpen(false)}
-              to="/quiz"
+              to="/careerquiz"
               className={navLinkClass}
             >
               Career Quiz

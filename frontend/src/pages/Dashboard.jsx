@@ -24,7 +24,7 @@ function Dashboard() {
       try {
         const { data } = await API.get("/auth/profile");
         setUser(data);
-      } catch (error) {
+      } catch {
         console.log("Failed to fetch user");
       }
     };
@@ -44,7 +44,7 @@ useEffect(() => {
 
       const allRes = await API.get("/quiz/all");
       setAllQuizzes(allRes.data);
-    } catch (error) {
+    } catch {
       console.log("Error loading dashboard data");
     }
   };

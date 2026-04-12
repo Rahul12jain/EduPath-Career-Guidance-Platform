@@ -18,6 +18,7 @@ import CareerDetail from "./pages/CareerDetail";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ExploreCareer from "./pages/ExploreCareer";
 
 
 function App() {
@@ -37,6 +38,8 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/careerquiz" element={<CareerQuiz />} />
           <Route path="/career/:id" element={<CareerDetail />} />
+          <Route path="/explorecareer" element={<ExploreCareer />} />
+          <Route path="/explorecareer/:id" element={<CareerDetail />} />
         </Route>
       </Routes>
 
