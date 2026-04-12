@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { FaGoogle, FaFacebookF } from "react-icons/fa";
+import { FaGoogle, FaFacebookF, FaEye, FaEyeSlash } from "react-icons/fa";
 import { HiAcademicCap } from "react-icons/hi";
 import signupImg from "../assets/signup-illustration.jpg";
 import API from "../services/api";
@@ -15,6 +15,10 @@ function SignUp() {
     password: "",
     confirmPassword: "",
   });
+
+  // 👇 NEW STATES
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -46,10 +50,7 @@ function SignUp() {
         password: formData.password,
       });
 
-      // Save token
       localStorage.setItem("token", data.token);
-
-      // Redirect to dashboard
       navigate("/dashboard");
     } catch (error) {
       alert(error.response?.data?.message || "Signup failed");
@@ -73,6 +74,7 @@ function SignUp() {
           </p>
 
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+            {/* NAME */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <input
                 className="border rounded-lg px-3 py-2"
@@ -88,6 +90,7 @@ function SignUp() {
               />
             </div>
 
+            {/* EMAIL */}
             <input
               className="border rounded-lg px-3 py-2 w-full"
               placeholder="Email Address"
@@ -96,21 +99,39 @@ function SignUp() {
               required
             />
 
-            <input
-              type="password"
-              className="border rounded-lg px-3 py-2 w-full"
-              placeholder="Password"
-              onChange={handleChange}
-              required
-            />
+            {/* PASSWORD */}
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                className="border rounded-lg px-3 py-2 w-full pr-10"
+                placeholder="Password"
+                onChange={handleChange}
+                required
+              />
+              <span
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500"
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
+            </div>
 
-            <input
-              type="password"
-              className="border rounded-lg px-3 py-2 w-full"
-              placeholder="Confirm Password"
-              onChange={handleChange}
-              required
-            />
+            {/* CONFIRM PASSWORD */}
+            <div className="relative">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                className="border rounded-lg px-3 py-2 w-full pr-10"
+                placeholder="Confirm Password"
+                onChange={handleChange}
+                required
+              />
+              <span
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500"
+              >
+                {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
+            </div>
 
             <label className="flex gap-2 text-sm text-gray-600">
               <input type="checkbox" required />I agree to Terms & Privacy
@@ -132,18 +153,12 @@ function SignUp() {
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <button
-              type="button"
-              className="flex items-center justify-center gap-2 border rounded-lg py-2 hover:border-red-500 hover:bg-red-50"
-            >
+            <button className="flex items-center justify-center gap-2 border rounded-lg py-2 hover:border-red-500 hover:bg-red-50">
               <FaGoogle className="text-red-500 text-lg" />
               <span className="font-medium">Google</span>
             </button>
 
-            <button
-              type="button"
-              className="flex items-center justify-center gap-2 border rounded-lg py-2 hover:border-blue-600 hover:bg-blue-50"
-            >
+            <button className="flex items-center justify-center gap-2 border rounded-lg py-2 hover:border-blue-600 hover:bg-blue-50">
               <FaFacebookF className="text-blue-600 text-lg" />
               <span className="font-medium">Facebook</span>
             </button>
