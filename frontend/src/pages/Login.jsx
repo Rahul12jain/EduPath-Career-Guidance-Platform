@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { FaGoogle, FaFacebookF } from "react-icons/fa";
+import { FaGoogle, FaFacebookF, FaEye, FaEyeSlash } from "react-icons/fa";
 import { HiAcademicCap } from "react-icons/hi";
 import loginImg from "../assets/login-illustration.jpg";
 import API from "../services/api";
@@ -12,6 +12,9 @@ function Login() {
     email: "",
     password: "",
   });
+
+  // 👇 NEW STATE
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -25,11 +28,7 @@ function Login() {
 
     try {
       const { data } = await API.post("/auth/login", formData);
-
-      // Save token
       localStorage.setItem("token", data.token);
-
-      // Redirect to dashboard
       navigate("/dashboard");
     } catch (error) {
       alert(error.response?.data?.message || "Login failed");
@@ -53,6 +52,7 @@ function Login() {
           </p>
 
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+            {/* EMAIL */}
             <input
               type="email"
               name="email"
@@ -62,14 +62,24 @@ function Login() {
               required
             />
 
-            <input
-              type="password"
-              name="password"
-              className="border rounded-lg px-3 py-2 w-full"
-              placeholder="Password"
-              onChange={handleChange}
-              required
-            />
+            {/* PASSWORD WITH EYE ICON */}
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                className="border rounded-lg px-3 py-2 w-full pr-10"
+                placeholder="Password"
+                onChange={handleChange}
+                required
+              />
+
+              <span
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500"
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
+            </div>
 
             <div className="flex justify-between text-sm">
               <label className="flex gap-2">
