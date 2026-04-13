@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://edu-path-career-guidance-platform.vercel.app/sitemap.xml
