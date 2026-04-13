@@ -1,3 +1,6 @@
+
+                                                                      <!-- SEO tags  -->
+
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
@@ -22,7 +25,17 @@
   </url>
 
   <url>
-    <loc>https://edu-path-career-guidance-platform.vercel.app/quiz</loc>
+    <loc>https://edu-path-career-guidance-platform.vercel.app/careerquiz</loc>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://edu-path-career-guidance-platform.vercel.app/explorecareer</loc>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://edu-path-career-guidance-platform.vercel.app/skill</loc>
     <priority>0.7</priority>
   </url>
 
