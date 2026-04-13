@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="760" viewBox="0 0 1100 760">
+  <defs>
+    <style>
+      .title { font: 700 34px Arial, sans-serif; fill: #111827; }
+      .subtitle { font: 18px Arial, sans-serif; fill: #4b5563; }
+      .boxTitle { font: 700 20px Arial, sans-serif; fill: #111827; }
+      .boxText { font: 15px Arial, sans-serif; fill: #4b5563; }
+      .small { font: 14px Arial, sans-serif; fill: #374151; }
+      .arrow { stroke: #2563eb; stroke-width: 4; fill: none; marker-end: url(#arrowhead); }
+      .card { fill: #ffffff; stroke: #dbeafe; stroke-width: 3; }
+      .route { fill: #eff6ff; stroke: #60a5fa; stroke-width: 3; }
+      .data { fill: #f0fdf4; stroke: #22c55e; stroke-width: 3; }
+      .detail { fill: #fff7ed; stroke: #f97316; stroke-width: 3; }
+    </style>
+    <marker id="arrowhead" markerWidth="12" markerHeight="8" refX="10" refY="4" orient="auto">
+      <path d="M 0 0 L 12 4 L 0 8 z" fill="#2563eb"/>
+    </marker>
+  </defs>
+
+  <rect width="1100" height="760" fill="#f9fafb"/>
+  <text x="60" y="62" class="title">Explore Career Section Flow</text>
+  <text x="60" y="96" class="subtitle">How users move from career cards to detailed guidance pages</text>
+
+  <rect x="70" y="145" width="280" height="95" rx="8" class="card"/>
+  <text x="95" y="182" class="boxTitle">Navbar / Home Cards</text>
+  <text x="95" y="212" class="boxText">User clicks Explore Career</text>
+
+  <path d="M 350 192 L 440 192" class="arrow"/>
+
+  <rect x="460" y="145" width="270" height="95" rx="8" class="route"/>
+  <text x="485" y="182" class="boxTitle">/explorecareer</text>
+  <text x="485" y="212" class="boxText">React Router opens page</text>
+
+  <path d="M 730 192 L 820 192" class="arrow"/>
+
+  <rect x="840" y="145" width="210" height="95" rx="8" class="card"/>
+  <text x="865" y="182" class="boxTitle">Career Cards</text>
+  <text x="865" y="212" class="boxText">Fields shown in grid</text>
+
+  <path d="M 945 240 L 945 320" class="arrow"/>
+
+  <rect x="790" y="340" width="260" height="105" rx="8" class="data"/>
+  <text x="815" y="378" class="boxTitle">careerFields.js</text>
+  <text x="815" y="408" class="boxText">One data source for cards,</text>
+  <text x="815" y="430" class="boxText">scope, exams, skills, guidance</text>
+
+  <path d="M 790 392 L 690 392" class="arrow"/>
+
+  <rect x="430" y="340" width="250" height="105" rx="8" class="card"/>
+  <text x="455" y="378" class="boxTitle">User Selects Field</text>
+  <text x="455" y="408" class="boxText">Example: Engineering</text>
+  <text x="455" y="430" class="boxText">Link uses field.id</text>
+
+  <path d="M 430 392 L 330 392" class="arrow"/>
+
+  <rect x="70" y="340" width="250" height="105" rx="8" class="route"/>
+  <text x="95" y="378" class="boxTitle">/explorecareer/:id</text>
+  <text x="95" y="408" class="boxText">Route loads CareerDetail</text>
+  <text x="95" y="430" class="boxText">useParams reads the id</text>
+
+  <path d="M 195 445 L 195 525" class="arrow"/>
+
+  <rect x="70" y="545" width="430" height="125" rx="8" class="detail"/>
+  <text x="95" y="584" class="boxTitle">CareerDetail.jsx</text>
+  <text x="95" y="614" class="boxText">Finds matching field by id and displays</text>
+  <text x="95" y="638" class="boxText">overview, scope, pathway, exams, skills,</text>
+  <text x="95" y="662" class="boxText">career options, guidance, and next step.</text>
+
+  <rect x="560" y="545" width="410" height="125" rx="8" fill="#fef2f2" stroke="#f87171" stroke-width="3"/>
+  <text x="585" y="584" class="boxTitle">Wrong URL Fallback</text>
+  <text x="585" y="614" class="boxText">If no field matches the id, the page shows</text>
+  <text x="585" y="638" class="boxText">Career field not found with a back button.</text>
+
+  <text x="60" y="720" class="small">Main idea: add or update a career in careerFields.js, and the card plus detail page update from the same data.</text>
+</svg>
