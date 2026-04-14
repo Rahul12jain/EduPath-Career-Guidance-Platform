@@ -39,7 +39,7 @@ function App() {
           <Route path="/careerquiz" element={<CareerQuiz />} />
           <Route path="/career/:id" element={<CareerDetail />} />
           <Route path="/explorecareer" element={ <ProtectedRoute> <ExploreCareer /> </ProtectedRoute> } />
-          <Route path="/explorecareer/:id" element={<CareerDetail />} />
+          <Route path="/explorecareer/:id" element={ <ProtectedRoute> <CareerDetail /> </ProtectedRoute> } />
         </Route>
       </Routes>
 
