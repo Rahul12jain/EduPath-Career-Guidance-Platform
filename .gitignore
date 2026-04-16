@@ -31,4 +31,5 @@ Frontend/dist/
 Backend/dist/
 
 .DS_Store
+.env.example
 
