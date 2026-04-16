@@ -19,12 +19,14 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ExploreCareer from "./pages/ExploreCareer";
+import AuthSessionManager from "./components/AuthSessionManager";
 
 
 function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
+      <AuthSessionManager />
       <Routes>
         {/* Layout Route */}
         <Route element={<Layout />}>
