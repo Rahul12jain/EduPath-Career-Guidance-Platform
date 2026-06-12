@@ -1,269 +1,213 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import API from "../services/api";
 
 const questions = [
   {
-    question: "Which activity do you enjoy the most?",
+    id: "1",
+    question: "Which subject do you enjoy most?",
+    options: ["Math", "Biology", "Business", "Arts"],
+  },
+  {
+    id: "2",
+    question: "What type of tasks do you prefer?",
     options: [
-      { text: "Solving logical problems", career: "Technology" },
-      { text: "Helping sick people", career: "Healthcare" },
-      { text: "Managing people or business", career: "Business" },
-      { text: "Creating art or designs", career: "Creative Arts" },
+      "Problem Solving",
+      "Helping People",
+      "Managing Things",
+      "Creative Work",
     ],
   },
   {
-    question: "Which subject do you like the most?",
+    id: "3",
+    question: "What motivates you the most?",
     options: [
-      { text: "Mathematics / Computer Science", career: "Technology" },
-      { text: "Biology", career: "Healthcare" },
-      { text: "Economics / Commerce", career: "Business" },
-      { text: "Drawing / Media", career: "Creative Arts" },
+      "Building Technology",
+      "Saving Lives",
+      "Leading Teams",
+      "Designing Experiences",
     ],
   },
   {
-    question: "How do you prefer to work?",
+    id: "4",
+    question: "Which environment do you prefer?",
+    options: ["Tech Company", "Hospital", "Corporate Office", "Creative Studio"],
+  },
+  {
+    id: "5",
+    question: "Which skill describes you best?",
+    options: ["Logical Thinking", "Empathy", "Leadership", "Creativity"],
+  },
+  {
+    id: "6",
+    question: "How do you solve problems?",
     options: [
-      { text: "Independently with systems", career: "Technology" },
-      { text: "Directly with people", career: "Healthcare" },
-      { text: "Leading a team", career: "Business" },
-      { text: "Expressing creativity", career: "Creative Arts" },
+      "Write code",
+      "Research and diagnose",
+      "Strategize plans",
+      "Sketch ideas",
     ],
+  },
+  {
+    id: "7",
+    question: "What kind of projects excite you?",
+    options: [
+      "Apps & Software",
+      "Medical Research",
+      "Startups",
+      "Design Portfolios",
+    ],
+  },
+  {
+    id: "8",
+    question: "What is your dream workplace?",
+    options: [
+      "Tech Startup",
+      "Medical Center",
+      "Corporate Firm",
+      "Design Agency",
+    ],
+  },
+  {
+    id: "9",
+    question: "Which strength defines you?",
+    options: [
+      "Analytical Thinking",
+      "Compassion",
+      "Decision Making",
+      "Imagination",
+    ],
+  },
+  {
+    id: "10",
+    question: "What role do you prefer in a team?",
+    options: ["Technical Expert", "Caregiver", "Team Leader", "Creative Head"],
   },
 ];
 
 function CareerQuiz() {
+  const navigate = useNavigate();
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState([]);
-  const [showResult, setShowResult] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleAnswer = (career) => {
-    setAnswers([...answers, career]);
+  const progress = ((current) / questions.length) * 100;
+
+  const handleAnswer = async (option) => {
+    const updated = [
+      ...answers,
+      { questionId: questions[current].id, answer: option },
+    ];
+    setAnswers(updated);
 
     if (current + 1 < questions.length) {
       setCurrent(current + 1);
     } else {
-      setShowResult(true);
+      // Last question answered — submit to backend
+      setSubmitting(true);
+      setError("");
+
+      try {
+        await API.post("/quiz/submit", { answers: updated });
+        navigate("/dashboard");
+      } catch (err) {
+        setError(err.response?.data?.message || "Failed to submit quiz. Please try again.");
+        setSubmitting(false);
+      }
     }
   };
 
-  const getResult = () => {
-    const count = {};
-    answers.forEach((career) => {
-      count[career] = (count[career] || 0) + 1;
-    });
-
-    return Object.keys(count).reduce((a, b) => (count[a] > count[b] ? a : b));
+  const handleBack = () => {
+    if (current > 0) {
+      setCurrent(current - 1);
+      setAnswers(answers.slice(0, -1));
+    }
   };
 
+  const selectedAnswer = answers[current]?.answer;
+
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 pt-24">
-      <div className="bg-white rounded-xl shadow p-8 max-w-xl w-full">
-        {!showResult ? (
-          <>
-            <h2 className="text-xl font-bold mb-4">
-              Career Quiz ({current + 1}/{questions.length})
-            </h2>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 pt-24 pb-16">
+      <div className="bg-white rounded-xl shadow-lg p-8 max-w-xl w-full">
+        {/* Progress Bar */}
+        <div className="mb-6">
+          <div className="flex justify-between text-sm text-gray-500 mb-2">
+            <span>Question {current + 1} of {questions.length}</span>
+            <span>{Math.round(progress)}% complete</span>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-2.5">
+            <div
+              className="bg-gradient-to-r from-blue-600 to-purple-600 h-2.5 rounded-full transition-all duration-500"
+              style={{ width: `${progress}%` }}
+            ></div>
+          </div>
+        </div>
 
-            <p className="mb-6 text-gray-700">{questions[current].question}</p>
+        {/* Question */}
+        <h2 className="text-xl font-bold text-gray-900 mb-6">
+          {questions[current].question}
+        </h2>
 
-            <div className="space-y-3">
-              {questions[current].options.map((option, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleAnswer(option.career)}
-                  className="w-full text-left px-4 py-3 border rounded-lg hover:bg-blue-50 transition"
-                >
-                  {option.text}
-                </button>
-              ))}
-            </div>
-          </>
-        ) : (
-          <>
-            <h2 className="text-2xl font-bold mb-4 text-center">
-              Your Recommended Career
-            </h2>
-
-            <p className="text-center text-lg text-blue-600 font-semibold">
-              {getResult()}
-            </p>
-
-            <p className="text-center text-gray-600 mt-4">
-              This result is based on your interests and preferences.
-            </p>
-
+        {/* Options */}
+        <div className="space-y-3">
+          {questions[current].options.map((option, index) => (
             <button
-              onClick={() => {
-                setCurrent(0);
-                setAnswers([]);
-                setShowResult(false);
-              }}
-              className="mt-6 w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition"
+              key={index}
+              onClick={() => handleAnswer(option)}
+              disabled={submitting}
+              className={`w-full text-left px-5 py-4 border-2 rounded-lg transition-all ${
+                selectedAnswer === option
+                  ? "border-blue-600 bg-blue-50 text-blue-700 font-medium"
+                  : "border-gray-200 hover:border-blue-400 hover:bg-blue-50"
+              } ${submitting ? "opacity-50 cursor-not-allowed" : ""}`}
             >
-              Retake Quiz
+              <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-gray-100 text-sm font-semibold text-gray-600 mr-3">
+                {String.fromCharCode(65 + index)}
+              </span>
+              {option}
             </button>
-          </>
+          ))}
+        </div>
+
+        {/* Error Message */}
+        {error && (
+          <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+            {error}
+          </div>
         )}
+
+        {/* Footer */}
+        <div className="mt-6 flex items-center justify-between">
+          <button
+            onClick={handleBack}
+            disabled={current === 0 || submitting}
+            className={`text-sm font-medium ${
+              current === 0 || submitting
+                ? "text-gray-300 cursor-not-allowed"
+                : "text-gray-600 hover:text-blue-600"
+            }`}
+          >
+            ← Back
+          </button>
+
+          {submitting && (
+            <div className="flex items-center gap-2 text-sm text-blue-600 font-medium">
+              <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+              Submitting...
+            </div>
+          )}
+
+          <span className="text-sm text-gray-400">
+            {questions.length - current - 1} questions left
+          </span>
+        </div>
       </div>
     </div>
   );
 }
 
 export default CareerQuiz;
-
-// import { useState } from "react";
-// import { useNavigate } from "react-router-dom";
-// import API from "../services/api";
-
-// function CareerQuiz() {
-//   const navigate = useNavigate();
-
-// const questions = [
-//   {
-//     id: "1",
-//     question: "Which subject do you enjoy most?",
-//     options: ["Math", "Biology", "Business", "Arts"],
-//   },
-//   {
-//     id: "2",
-//     question: "What type of tasks do you prefer?",
-//     options: [
-//       "Problem Solving",
-//       "Helping People",
-//       "Managing Things",
-//       "Creative Work",
-//     ],
-//   },
-//   {
-//     id: "3",
-//     question: "What motivates you the most?",
-//     options: [
-//       "Building Technology",
-//       "Saving Lives",
-//       "Leading Teams",
-//       "Designing Experiences",
-//     ],
-//   },
-//   {
-//     id: "4",
-//     question: "Which environment do you prefer?",
-//     options: [
-//       "Tech Company",
-//       "Hospital",
-//       "Corporate Office",
-//       "Creative Studio",
-//     ],
-//   },
-//   {
-//     id: "5",
-//     question: "Which skill describes you best?",
-//     options: ["Logical Thinking", "Empathy", "Leadership", "Creativity"],
-//   },
-//   {
-//     id: "6",
-//     question: "How do you solve problems?",
-//     options: [
-//       "Write code",
-//       "Research and diagnose",
-//       "Strategize plans",
-//       "Sketch ideas",
-//     ],
-//   },
-//   {
-//     id: "7",
-//     question: "What kind of projects excite you?",
-//     options: [
-//       "Apps & Software",
-//       "Medical Research",
-//       "Startups",
-//       "Design Portfolios",
-//     ],
-//   },
-//   {
-//     id: "8",
-//     question: "What is your dream workplace?",
-//     options: [
-//       "Tech Startup",
-//       "Medical Center",
-//       "Corporate Firm",
-//       "Design Agency",
-//     ],
-//   },
-//   {
-//     id: "9",
-//     question: "Which strength defines you?",
-//     options: [
-//       "Analytical Thinking",
-//       "Compassion",
-//       "Decision Making",
-//       "Imagination",
-//     ],
-//   },
-//   {
-//     id: "10",
-//     question: "What role do you prefer in a team?",
-//     options: ["Technical Expert", "Caregiver", "Team Leader", "Creative Head"],
-//   },
-// ];
-
-//   const [answers, setAnswers] = useState([]);
-
-//   const handleSelect = (questionId, option) => {
-//     setAnswers((prev) => {
-//       const filtered = prev.filter((a) => a.questionId !== questionId);
-//       return [...filtered, { questionId, answer: option }];
-//     });
-//   };
-
-//   const handleSubmit = async () => {
-//     try {
-//       await API.post("/quiz/submit", { answers });
-//       navigate("/dashboard");
-//     } catch (error) {
-//       alert("Error submitting quiz");
-//     }
-//   };
-
-//   return (
-//     <div className="pt-24 px-6 max-w-3xl mx-auto">
-//       <h1 className="text-2xl font-bold mb-6">Career Quiz</h1>
-
-//       {questions.map((q) => (
-//         <div key={q.id} className="mb-6 bg-white p-5 rounded shadow">
-//           <h2 className="font-semibold mb-3">{q.question}</h2>
-//           <div className="space-y-2">
-//             {q.options.map((option) => {
-//               const isSelected = answers.find(
-//                 (a) => a.questionId === q.id && a.answer === option,
-//               );
-
-//               return (
-//                 <button
-//                   key={option}
-//                   onClick={() => handleSelect(q.id, option)}
-//                   className={`block w-full text-left px-4 py-2 border rounded transition
-//         ${
-//           isSelected
-//             ? "bg-blue-600 text-white border-blue-600"
-//             : "hover:bg-blue-50"
-//         }`}
-//                 >
-//                   {option}
-//                 </button>
-//               );
-//             })}
-//           </div>
-//         </div>
-//       ))}
-
-//       <button
-//         onClick={handleSubmit}
-//         className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg"
-//       >
-//         Submit Quiz
-//       </button>
-//     </div>
-//   );
-// }
-
-// export default CareerQuiz;
-
