@@ -23,15 +23,7 @@ function SignUp() {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.placeholder.includes("First")
-        ? "firstName"
-        : e.target.placeholder.includes("Last")
-          ? "lastName"
-          : e.target.placeholder.includes("Email")
-            ? "email"
-            : e.target.placeholder.includes("Confirm")
-              ? "confirmPassword"
-              : "password"]: e.target.value,
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -77,12 +69,14 @@ function SignUp() {
             {/* NAME */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <input
+                name="firstName"
                 className="border rounded-lg px-3 py-2"
                 placeholder="First Name"
                 onChange={handleChange}
                 required
               />
               <input
+                name="lastName"
                 className="border rounded-lg px-3 py-2"
                 placeholder="Last Name"
                 onChange={handleChange}
@@ -92,6 +86,7 @@ function SignUp() {
 
             {/* EMAIL */}
             <input
+              name="email"
               className="border rounded-lg px-3 py-2 w-full"
               placeholder="Email Address"
               type="email"
@@ -102,6 +97,7 @@ function SignUp() {
             {/* PASSWORD */}
             <div className="relative">
               <input
+                name="password"
                 type={showPassword ? "text" : "password"}
                 className="border rounded-lg px-3 py-2 w-full pr-10"
                 placeholder="Password"
@@ -119,6 +115,7 @@ function SignUp() {
             {/* CONFIRM PASSWORD */}
             <div className="relative">
               <input
+                name="confirmPassword"
                 type={showConfirmPassword ? "text" : "password"}
                 className="border rounded-lg px-3 py-2 w-full pr-10"
                 placeholder="Confirm Password"
