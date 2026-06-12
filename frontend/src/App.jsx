@@ -38,7 +38,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/about" element={<About />} />
-          <Route path="/careerquiz" element={<CareerQuiz />} />
+          <Route path="/careerquiz" element={ <ProtectedRoute> <CareerQuiz /> </ProtectedRoute> } />
           <Route path="/career/:id" element={<CareerDetail />} />
           <Route path="/explorecareer" element={ <ProtectedRoute> <ExploreCareer /> </ProtectedRoute> } />
           <Route path="/explorecareer/:id" element={ <ProtectedRoute> <CareerDetail /> </ProtectedRoute> } />
