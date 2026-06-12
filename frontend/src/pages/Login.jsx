@@ -29,7 +29,7 @@ function Login() {
     try {
       const { data } = await API.post("/auth/login", formData);
       localStorage.setItem("token", data.token);
-      navigate("/dashboard");
+      navigate("/");
     } catch (error) {
       alert(error.response?.data?.message || "Login failed");
     }
