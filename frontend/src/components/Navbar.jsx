@@ -155,7 +155,7 @@ function Navbar() {
             <div className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-1 text-sm font-medium">
               <Link to="/login" className="hover:text-blue-200 transition">Login</Link>
               <span className="text-blue-300">/</span>
-              <Link to="/signup" className="hover:text-blue-200 transition">Sign Up</Link>
+              <Link to="/signup" className="hover:text-blue-200 transition">SignUp</Link>
             </div>
           )}
         </div>

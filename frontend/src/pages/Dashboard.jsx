@@ -5,6 +5,7 @@ import {
   FaQuestionCircle,
   FaTrophy,
   FaChartBar,
+  FaClipboardCheck,
   FaArrowRight,
   FaTrash,
   FaRedo,
@@ -17,6 +18,8 @@ function Dashboard() {
   const [user, setUser] = useState(null);
   const [latestQuiz, setLatestQuiz] = useState(null);
   const [allQuizzes, setAllQuizzes] = useState([]);
+  const [latestSkill, setLatestSkill] = useState(null);
+  const [allSkills, setAllSkills] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showConfirm, setShowConfirm] = useState(false);
   const [selectedQuizId, setSelectedQuizId] = useState(null);
@@ -24,15 +27,19 @@ function Dashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [userRes, quizRes, allRes] = await Promise.allSettled([
+        const [userRes, quizRes, allRes, skillRes, allSkillRes] = await Promise.allSettled([
           API.get("/auth/profile"),
           API.get("/quiz/latest"),
           API.get("/quiz/all"),
+          API.get("/skill/latest"),
+          API.get("/skill/all"),
         ]);
 
         if (userRes.status === "fulfilled") setUser(userRes.value.data);
         if (quizRes.status === "fulfilled") setLatestQuiz(quizRes.value.data);
         if (allRes.status === "fulfilled") setAllQuizzes(allRes.value.data);
+        if (skillRes.status === "fulfilled") setLatestSkill(skillRes.value.data);
+        if (allSkillRes.status === "fulfilled") setAllSkills(allSkillRes.value.data);
       } catch {
         console.log("Error loading dashboard data");
       } finally {
@@ -98,7 +105,7 @@ function Dashboard() {
       </div>
 
       {/* Stats Cards — all dynamic */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
         <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center">
@@ -130,6 +137,23 @@ function Dashboard() {
             <p className="text-sm text-gray-500">Careers Explored</p>
           </div>
           <p className="text-3xl font-bold text-gray-900">{uniqueCareers}</p>
+        </div>
+
+        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 bg-orange-100 text-orange-600 rounded-lg flex items-center justify-center">
+              <FaClipboardCheck />
+            </div>
+            <p className="text-sm text-gray-500">Skill Score</p>
+          </div>
+          {latestSkill ? (
+            <>
+              <p className="text-3xl font-bold text-gray-900">{latestSkill.averageScore}/5</p>
+              <p className="text-sm text-orange-600 font-medium mt-1">{latestSkill.topCareer?.title}</p>
+            </>
+          ) : (
+            <Link to="/skill" className="text-sm text-blue-600 hover:underline">Take assessment →</Link>
+          )}
         </div>
       </div>
 
@@ -261,6 +285,170 @@ function Dashboard() {
                   );
                 })}
               </div>
+            )}
+          </div>
+        </div>
+
+        {/* Skill Assessment Progress */}
+        <div className="lg:col-span-2">
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="font-semibold text-gray-900">Skill Assessment Progress</h2>
+              <Link to="/skill" className="text-sm text-blue-600 hover:underline">
+                {allSkills.length > 0 ? "Retake →" : "Take Assessment →"}
+              </Link>
+            </div>
+
+            {allSkills.length === 0 ? (
+              <div className="text-center py-8">
+                <FaClipboardCheck className="text-4xl text-gray-300 mx-auto mb-3" />
+                <p className="text-gray-500 font-medium">No skill data yet</p>
+                <p className="text-sm text-gray-400 mt-1">
+                  Take the skill assessment to see your strengths, weaknesses, and track your progress over time.
+                </p>
+                <Link
+                  to="/skill"
+                  className="mt-4 inline-block bg-blue-600 text-white px-5 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition"
+                >
+                  Take Skill Assessment
+                </Link>
+              </div>
+            ) : (
+              /* Latest vs Previous Comparison */
+              (() => {
+                const latest = allSkills[0];
+                const previous = allSkills.length > 1 ? allSkills[1] : null;
+                const scoreDiff = previous ? (latest.averageScore - previous.averageScore).toFixed(1) : null;
+
+                const skillLabels = {
+                  analytical: "Analytical",
+                  communication: "Communication",
+                  creativity: "Creativity",
+                  leadership: "Leadership",
+                  technical: "Technical",
+                  empathy: "Empathy",
+                  discipline: "Discipline",
+                  adaptability: "Adaptability",
+                };
+
+                return (
+                  <>
+                    {/* Score Overview */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                      <div className="bg-blue-50 rounded-lg p-4 text-center">
+                        <p className="text-sm text-gray-500 mb-1">Current Score</p>
+                        <p className="text-2xl font-bold text-blue-600">{latest.averageScore}/5</p>
+                        {scoreDiff && (
+                          <p className={`text-xs font-medium mt-1 ${parseFloat(scoreDiff) >= 0 ? "text-green-600" : "text-red-500"}`}>
+                            {parseFloat(scoreDiff) >= 0 ? "↑" : "↓"} {Math.abs(parseFloat(scoreDiff))} from previous
+                          </p>
+                        )}
+                      </div>
+                      <div className="bg-green-50 rounded-lg p-4 text-center">
+                        <p className="text-sm text-gray-500 mb-1">Strengths</p>
+                        <p className="text-2xl font-bold text-green-600">{latest.strengths?.length || 0}</p>
+                        <p className="text-xs text-gray-400 mt-1">skills strong</p>
+                      </div>
+                      <div className="bg-yellow-50 rounded-lg p-4 text-center">
+                        <p className="text-sm text-gray-500 mb-1">To Improve</p>
+                        <p className="text-2xl font-bold text-yellow-600">{latest.improvements?.length || 0}</p>
+                        <p className="text-xs text-gray-400 mt-1">skills to work on</p>
+                      </div>
+                    </div>
+
+                    {/* Per-Skill Bars with Change */}
+                    {latest.ratings && (
+                      <div className="mb-6">
+                        <h3 className="text-sm font-medium text-gray-700 mb-3">Skill Breakdown</h3>
+                        <div className="space-y-3">
+                          {Object.entries(latest.ratings).map(([key, val]) => {
+                            const prevVal = previous?.ratings?.[key];
+                            const diff = prevVal != null ? val - prevVal : null;
+                            return (
+                              <div key={key} className="flex items-center gap-3">
+                                <span className="text-xs text-gray-500 w-24 shrink-0">{skillLabels[key] || key}</span>
+                                <div className="flex-1 bg-gray-100 rounded-full h-2.5">
+                                  <div
+                                    className="bg-blue-500 h-2.5 rounded-full transition-all"
+                                    style={{ width: `${(val / 5) * 100}%` }}
+                                  ></div>
+                                </div>
+                                <span className="text-xs font-semibold text-gray-700 w-6 text-right">{val}</span>
+                                {diff !== null && diff !== 0 && (
+                                  <span className={`text-xs font-medium w-8 ${diff > 0 ? "text-green-600" : "text-red-500"}`}>
+                                    {diff > 0 ? `+${diff}` : diff}
+                                  </span>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Strengths & Weaknesses */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                      {latest.strengths?.length > 0 && (
+                        <div className="bg-green-50 rounded-lg p-4">
+                          <h3 className="text-sm font-semibold text-green-700 mb-2">✅ Strengths</h3>
+                          <div className="flex flex-wrap gap-2">
+                            {latest.strengths.map((s, i) => (
+                              <span key={i} className="text-xs bg-green-100 text-green-700 px-2.5 py-1 rounded-full">{s}</span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {latest.improvements?.length > 0 && (
+                        <div className="bg-yellow-50 rounded-lg p-4">
+                          <h3 className="text-sm font-semibold text-yellow-700 mb-2">⚠️ Areas to Improve</h3>
+                          <div className="flex flex-wrap gap-2">
+                            {latest.improvements.map((s, i) => (
+                              <span key={i} className="text-xs bg-yellow-100 text-yellow-700 px-2.5 py-1 rounded-full">{s}</span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Assessment History */}
+                    {allSkills.length > 1 && (
+                      <div>
+                        <h3 className="text-sm font-medium text-gray-700 mb-3">Assessment History</h3>
+                        <div className="space-y-2">
+                          {allSkills.map((skill, idx) => {
+                            const prev = allSkills[idx + 1];
+                            const diff = prev ? (skill.averageScore - prev.averageScore).toFixed(1) : null;
+                            return (
+                              <div key={skill._id} className="flex items-center justify-between p-3 rounded-lg border border-gray-100">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-7 h-7 bg-gray-100 rounded-full flex items-center justify-center text-xs font-semibold text-gray-500">
+                                    {allSkills.length - idx}
+                                  </div>
+                                  <div>
+                                    <p className="text-sm font-medium text-gray-800">{skill.topCareer?.title}</p>
+                                    <p className="text-xs text-gray-400">
+                                      {new Date(skill.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                                      {" · "}{timeAgo(skill.createdAt)}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm font-semibold text-gray-700">{skill.averageScore}/5</span>
+                                  {diff !== null && (
+                                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${parseFloat(diff) > 0 ? "bg-green-50 text-green-600" : parseFloat(diff) < 0 ? "bg-red-50 text-red-500" : "bg-gray-50 text-gray-400"}`}>
+                                      {parseFloat(diff) > 0 ? `↑${diff}` : parseFloat(diff) < 0 ? `↓${Math.abs(parseFloat(diff))}` : "="}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </>
+                );
+              })()
             )}
           </div>
         </div>

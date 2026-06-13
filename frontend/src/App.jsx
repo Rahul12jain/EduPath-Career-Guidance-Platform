@@ -32,7 +32,7 @@ function App() {
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
           <Route path="/quiz" element={<Quiz />} />
-          <Route path="/skill" element={<Skill />} />
+          <Route path="/skill" element={ <ProtectedRoute> <Skill /> </ProtectedRoute> } />
           <Route path="/careers" element={<Careers />} />
           <Route path="/dashboard" element={ <ProtectedRoute> <Dashboard /> </ProtectedRoute> } />
           <Route path="/login" element={<Login />} />
