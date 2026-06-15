@@ -483,11 +483,21 @@ function Dashboard() {
 
             <Link
               to="/skill"
-              className="flex items-center justify-between w-full px-4 py-3.5 rounded-lg bg-green-50 text-green-700 hover:bg-green-100 transition"
+              className="flex items-center justify-between w-full px-4 py-3.5 rounded-lg mb-3 bg-green-50 text-green-700 hover:bg-green-100 transition"
             >
               <span className="flex items-center gap-2 font-medium">
                 <FaChartBar size={13} />
                 Skills Assessment
+              </span>
+              <FaArrowRight size={12} />
+            </Link>
+
+            <Link
+              to="/ai-advisor"
+              className="flex items-center justify-between w-full px-4 py-3.5 rounded-lg bg-gradient-to-r from-blue-50 to-purple-50 text-purple-700 hover:from-blue-100 hover:to-purple-100 transition"
+            >
+              <span className="flex items-center gap-2 font-medium">
+                ✨ AI Career Advisor
               </span>
               <FaArrowRight size={12} />
             </Link>

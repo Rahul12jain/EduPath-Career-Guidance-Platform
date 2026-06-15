@@ -13,6 +13,7 @@ import About from "./pages/About";
 import CareerQuiz from "./pages/CareerQuiz";
 import Skill from "./pages/Skill";
 import CareerDetail from "./pages/CareerDetail";
+import AIAdvisor from "./pages/AIAdvisor";
 
 
 import { ToastContainer } from "react-toastify";
@@ -42,6 +43,7 @@ function App() {
           <Route path="/career/:id" element={<CareerDetail />} />
           <Route path="/explorecareer" element={ <ProtectedRoute> <ExploreCareer /> </ProtectedRoute> } />
           <Route path="/explorecareer/:id" element={ <ProtectedRoute> <CareerDetail /> </ProtectedRoute> } />
+          <Route path="/ai-advisor" element={ <ProtectedRoute> <AIAdvisor /> </ProtectedRoute> } />
         </Route>
       </Routes>
 
