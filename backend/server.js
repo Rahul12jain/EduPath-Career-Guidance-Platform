@@ -7,6 +7,7 @@ const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const quizRoutes = require("./routes/quizRoutes");
 const skillRoutes = require("./routes/skillRoutes");
+const aiRoutes = require("./routes/aiRoutes");
 
 
 const app = express();
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/quiz", quizRoutes);
 app.use("/api/skill", skillRoutes);
+app.use("/api/ai", aiRoutes);
 
  
 
