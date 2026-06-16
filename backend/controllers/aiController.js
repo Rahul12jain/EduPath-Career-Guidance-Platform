@@ -4,7 +4,13 @@ const QuizResult = require("../models/QuizResult");
 const SkillResult = require("../models/SkillResult");
 
 // Initialize Gemini
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const getGeminiClient = () => {
+  if (!process.env.GEMINI_API_KEY) {
+    throw new Error("Missing GEMINI_API_KEY environment variable.");
+  }
+
+  return new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+};
 
 const parseGeminiErrorMessage = (error) => {
   if (!error?.message) return null;
@@ -18,6 +24,8 @@ const parseGeminiErrorMessage = (error) => {
 
 exports.getCareerAdvice = async (req, res) => {
   try {
+    const ai = getGeminiClient();
+
     // Fetch user's latest quiz and skill data from DB
     const [latestQuiz, latestSkill] = await Promise.all([
       QuizResult.findOne({ user: req.user._id }).sort({ createdAt: -1 }),
@@ -136,6 +144,10 @@ End with a brief 2-3 sentence personalized encouragement based on their strength
 
     const advice = response.text;
 
+    if (!advice) {
+      throw new Error("Gemini returned an empty response.");
+    }
+
     res.status(200).json({ advice });
   } catch (error) {
     console.error("AI Advice Error:", error);
@@ -147,6 +159,13 @@ End with a brief 2-3 sentence personalized encouragement based on their strength
       statusCode === 429 ||
       geminiError?.error?.status === "RESOURCE_EXHAUSTED" ||
       /quota|rate limit|resource_exhausted/i.test(geminiMessage);
+
+    if (/missing gemini_api_key/i.test(geminiMessage)) {
+      return res.status(500).json({
+        message:
+          "Gemini API key is not configured on the backend server. Add GEMINI_API_KEY in Render environment variables and redeploy.",
+      });
+    }
 
     if (isQuotaError) {
       return res.status(429).json({
